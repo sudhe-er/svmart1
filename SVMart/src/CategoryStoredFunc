@@ -1,0 +1,33 @@
+
+ DROP FUNCTION get_product_details();
+ 
+ 
+CREATE OR REPLACE FUNCTION get_product_details()
+RETURNS TABLE (
+    pid INTEGER,
+    pname VARCHAR(100),
+     pcatid INTEGER,
+    hsn_id INTEGER,
+    image VARCHAR(100),
+    brand varchar(100),
+    batchno varchar(20),
+     price NUMERIC,
+    stock INTEGER,
+    mrp numeric
+)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT p.prod_id, p.prod_title, p.prod_prct_id,
+           p.prod_hsnc_id, p.prod_image,p.prod_brand, ps.prod_batchno,
+           ps.prod_price::NUMERIC,  -- Cast to NUMERIC to match the data type defined in RETURNS TABLE
+           ps.prod_stock,
+           ps.prod_mrp::NUMERIC  -- Cast to NUMERIC to match the data type defined in RETURNS TABLE
+    FROM products1729 p
+    JOIN productstock1729 ps ON p.prod_id = ps.prod_id;
+END;
+$$
+LANGUAGE plpgsql;
+
+SELECT * FROM get_product_details();
+
